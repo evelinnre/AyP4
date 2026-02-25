@@ -23,7 +23,7 @@ class Reproductor:
         return self.cabeza is None  #retorna un booleano
 
     
-    def insertar_inicio(self, nombre, duracion):
+    """def insertar_inicio(self, nombre, duracion):
         nuevo = Cancion(nombre, duracion)
 
         if self.esta_vacia():
@@ -32,7 +32,7 @@ class Reproductor:
         else:
             nuevo.siguiente = self.cabeza
             self.cabeza.anterior = nuevo
-            self.cabeza = nuevo
+            self.cabeza = nuevo"""
 
 
     def insertar_final(self, nombre, duracion):
@@ -51,7 +51,7 @@ class Reproductor:
         print("Canción agregada")
 
     # Mostrar lista de canciones
-    def mostrar_lista(self):
+    """def mostrar_lista(self):
         if self.esta_vacia():
             print("Lista vacia")
             return
@@ -63,7 +63,30 @@ class Reproductor:
             else:
                 print(f"  {actual.nombre} ({actual.duracion_formato()})")
 
-            actual = actual.siguiente
+            actual = actual.siguiente"""
+    def mostrar_lista(self):
+        if self.esta_vacia():
+            print("Lista vacía")
+            return
+
+        print("\nLista de canciones:")
+        self._mostrar_recursivo(self.cabeza)
+
+    
+    def _mostrar_recursivo(self, actual):
+            # Caso base: no hay más nodos
+            if actual is None:
+                return
+
+            # Mostrar el actual actual
+            if actual == self.actual:
+                print(f" {actual.nombre} ({actual.duracion_formato()})  <-- Reproduciendo")
+            else:
+                print(f"  {actual.nombre} ({actual.duracion_formato()})")
+
+            # Llamada recursiva al siguiente actual
+            self._mostrar_recursivo(actual.siguiente)
+
 
       
 
@@ -122,7 +145,9 @@ class Reproductor:
         print("Canción no encontrada")
 
 
-
+# =========================
+# MENÚ INTERACTIVO
+# =========================
 def menu():
     print("\nREPRODUCTOR DE CANCIONES ")
     print("1. Agregar canción")
@@ -134,7 +159,9 @@ def menu():
     print("7. Salir")
 
 
-
+# =========================
+# PROGRAMA PRINCIPAL
+# =========================
 reproductor = Reproductor()
 
 while True:
@@ -163,7 +190,7 @@ while True:
         nombre = input("Nombre de la canción a eliminar: ")
         reproductor.eliminar_cancion(nombre)
 
-    elif opcion == "7":
+    elif opcion == "7": 
         print("Saliendo del reproductor...")
         break
 

@@ -23,7 +23,7 @@ class Reproductor:
         return self.cabeza is None  #retorna un booleano
 
     
-    def insertar_inicio(self, nombre, duracion):
+    """def insertar_inicio(self, nombre, duracion):
         nuevo = Cancion(nombre, duracion)
 
         if self.esta_vacia():
@@ -32,26 +32,35 @@ class Reproductor:
         else:
             nuevo.siguiente = self.cabeza
             self.cabeza.anterior = nuevo
-            self.cabeza = nuevo
+            self.cabeza = nuevo"""
 
 
     def insertar_final(self, nombre, duracion):
-        nuevo= Cancion(nombre, duracion)
+        nuevo = Cancion(nombre, duracion)
+
         if self.esta_vacia():
-            #Lista vacia:cabeza y cola apuntan al nuevo
-            self.cabeza=nuevo
-            self.cola=nuevo
-            self.actual = nuevo   
+            self.cabeza = nuevo
+            self.cola = nuevo
+            self.actual = nuevo
         else:
-             #conectar nuevo con la cola actual
-            self.cola.siguiente=nuevo
-            nuevo.anterior= self.cola
-            self.cola=nuevo
-            
+            self._insertar_final_rec(self.cabeza, nuevo)
+
         print("Canción agregada")
 
+
+    def _insertar_final_rec(self, actual, nuevo):
+        # Caso base: último nodo
+        if actual.siguiente is None:
+            actual.siguiente = nuevo
+            nuevo.anterior = actual
+            self.cola = nuevo
+            return
+
+        # Llamada recursiva
+        self._insertar_final_rec(actual.siguiente, nuevo)
+
     # Mostrar lista de canciones
-    def mostrar_lista(self):
+    """def mostrar_lista(self):
         if self.esta_vacia():
             print("Lista vacia")
             return
@@ -63,9 +72,29 @@ class Reproductor:
             else:
                 print(f"  {actual.nombre} ({actual.duracion_formato()})")
 
-            actual = actual.siguiente
+            actual = actual.siguiente"""
+    def mostrar_lista(self):
+        if self.esta_vacia():
+            print("Lista vacía")
+            return
 
-      
+        print("\nLista de canciones:")
+        self._mostrar_recursivo(self.cabeza)
+
+    
+    def _mostrar_recursivo(self, actual):
+            # Caso base: no hay más nodos
+            if actual is None:
+                return
+
+            # Mostrar el actual actual
+            if actual == self.actual:
+                print(f" {actual.nombre} ({actual.duracion_formato()})  <-- Reproduciendo")
+            else:
+                print(f"  {actual.nombre} ({actual.duracion_formato()})")
+
+            # Llamada recursiva al siguiente actual
+            self._mostrar_recursivo(actual.siguiente)
 
     # Reproducir canción actual
     def reproducir(self):
@@ -92,37 +121,46 @@ class Reproductor:
 
     # Eliminar una canción por nombre
     def eliminar_cancion(self, nombre):
-        actual = self.cabeza
+        self._eliminar_rec(self.cabeza, nombre)
 
-        while actual:
-            if actual.nombre == nombre:
-                # Si es la primera
-                if actual.anterior is None:
-                    self.cabeza = actual.siguiente
+
+    def _eliminar_rec(self, actual, nombre):
+        # Caso base: se llegó al final y no se encontró
+        if actual is None:      
+            print("Canción no encontrada")
+            return
+
+        # Caso: se encontró la canción
+        if actual.nombre == nombre:
+
+            # Si es la primera (cabeza)
+            if actual.anterior is None:
+                self.cabeza = actual.siguiente
+                if self.cabeza:
                     self.cabeza.anterior = None
-                else:
+            else:
+                actual.anterior.siguiente = actual.siguiente
 
-                    actual.anterior.siguiente = actual.siguiente
+            # Si no es la última
+            if actual.siguiente:
+                actual.siguiente.anterior = actual.anterior
+            else:
+                self.cola = actual.anterior
 
-                # Si no es la última
-                if actual.siguiente:
-                    actual.siguiente.anterior = actual.anterior
+            # Ajustar canción actual
+            if self.actual == actual:
+                self.actual = actual.siguiente or actual.anterior
 
-                # Ajustar canción actual
-                if self.actual == actual:
-                    self.actual = actual.siguiente 
-                else:
-                    self.actual=actual.anterior
+            print("Canción eliminada")
+            return
 
-                print(" Canción eliminada")
-                return
-
-            actual = actual.siguiente
-
-        print("Canción no encontrada")
+        # Llamada recursiva
+        self._eliminar_rec(actual.siguiente, nombre)
 
 
-
+# =========================
+# MENÚ INTERACTIVO
+# =========================
 def menu():
     print("\nREPRODUCTOR DE CANCIONES ")
     print("1. Agregar canción")
@@ -134,7 +172,9 @@ def menu():
     print("7. Salir")
 
 
-
+# =========================
+# PROGRAMA PRINCIPAL
+# =========================
 reproductor = Reproductor()
 
 while True:
@@ -163,9 +203,10 @@ while True:
         nombre = input("Nombre de la canción a eliminar: ")
         reproductor.eliminar_cancion(nombre)
 
-    elif opcion == "7":
+    elif opcion == "7": 
         print("Saliendo del reproductor...")
         break
 
     else:
         print(" Opción inválida")
+

@@ -1,0 +1,13 @@
+def permutaciones(lista):
+    if len(lista)==0:
+        return [lista]
+    resultado = []
+    for i in range(len(lista)):
+        elemento = lista[i]
+        resto = lista[:i] + lista[i+1:]
+        for perm in permutaciones(resto):
+            resultado.append([elemento] + perm)
+    return resultado
+
+lista = [1, 3, 7, 1, 3, 7, 1, 3, 7]
+print(permutaciones(lista))
